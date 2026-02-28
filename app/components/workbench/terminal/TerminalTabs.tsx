@@ -152,8 +152,10 @@ export const TerminalTabs = memo(() => {
                       )}
                       onClick={() => setActiveTerminal(index)}
                     >
-                      <div className="i-ph:terminal-window-duotone text-lg" />
-                      Bolt Terminal
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <div className="i-ph:terminal-window text-xl" />
+                        Cashewnut Terminal
+                      </div>
                     </button>
                   ) : (
                     <React.Fragment>
