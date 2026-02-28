@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Cashewnut related issues
+    url: https://github.com/Cashewnut/Cashewnut/issues/new/choose
+    about: Report issues related to Cashewnut (not Cashewnut)
+  - name: Chat
+    url: https://thinktank.ottomator.ai
+    about: Ask questions and discuss with other Cashewnut users.
