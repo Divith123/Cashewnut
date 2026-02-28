@@ -104,7 +104,6 @@
   --bolt-terminal-brightWhite: #a5a5a5;
   --modern-scrollbar-thumb-background: rgba(100, 100, 100, 0.3); // Example light theme color
   --modern-scrollbar-thumb-backgroundHover: rgba(74, 74, 74, 0.8);
-  --logo-filter: none;
 }
 
 /* Color Tokens Dark Theme */
@@ -213,7 +212,6 @@
   --bolt-terminal-brightWhite: #f1f1f0;
   --modern-scrollbar-thumb-background: rgba(100, 100, 100, 0.3); // Example dark theme color (adjust as needed)
   --modern-scrollbar-thumb-backgroundHover: rgba(10, 10, 10, 0.8);
-  --logo-filter: invert(1) brightness(2);
 }
 
 /*

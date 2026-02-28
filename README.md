@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.svg" alt="Cashewnut Logo" height="80" />
+  <img src="public/cashewnut-white-animated.svg" alt="Cashewnut Logo" height="80" />
 </div>
 
 # Cashewnut — Autonomous AI Software Development Company
