@@ -2,6 +2,7 @@ import { json } from '@remix-run/cloudflare';
 import { LLMManager } from '~/lib/modules/llm/manager';
 import type { ModelInfo } from '~/lib/modules/llm/types';
 import type { ProviderInfo } from '~/types/model';
+import type { IProviderSetting } from '~/types/model';
 import { getApiKeysFromCookie, getProviderSettingsFromCookie } from '~/lib/api/cookies';
 
 interface ModelsResponse {
@@ -17,9 +18,11 @@ function getProviderInfo(llmManager: LLMManager) {
   if (!cachedProviders) {
     cachedProviders = llmManager.getAllProviders().map((provider) => ({
       name: provider.name,
+      staticModels: provider.staticModels ?? [],
       getApiKeyLink: provider.getApiKeyLink,
       labelForGetApiKey: provider.labelForGetApiKey,
       icon: provider.icon,
+      getDynamicModels: provider.getDynamicModels,
     }));
   }
 
@@ -27,13 +30,15 @@ function getProviderInfo(llmManager: LLMManager) {
     const defaultProvider = llmManager.getDefaultProvider();
     cachedDefaultProvider = {
       name: defaultProvider.name,
+      staticModels: defaultProvider.staticModels ?? [],
       getApiKeyLink: defaultProvider.getApiKeyLink,
       labelForGetApiKey: defaultProvider.labelForGetApiKey,
       icon: defaultProvider.icon,
+      getDynamicModels: defaultProvider.getDynamicModels,
     };
   }
 
-  return { providers: cachedProviders, defaultProvider: cachedDefaultProvider };
+  return { providers: cachedProviders ?? [], defaultProvider: cachedDefaultProvider ?? { name: '', staticModels: [], icon: '', getApiKeyLink: '', labelForGetApiKey: '' } };
 }
 
 export async function loader({

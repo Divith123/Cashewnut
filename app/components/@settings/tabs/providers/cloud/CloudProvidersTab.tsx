@@ -75,7 +75,7 @@ const CloudProvidersTab = () => {
       .map(([key, value]) => ({
         name: key,
         settings: value.settings,
-        // staticModels removed: now only dynamic models are used
+        staticModels: value.staticModels ?? [],
         getDynamicModels: value.getDynamicModels,
         getApiKeyLink: value.getApiKeyLink,
         labelForGetApiKey: value.labelForGetApiKey,
