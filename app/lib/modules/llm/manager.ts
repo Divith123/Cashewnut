@@ -10,10 +10,64 @@ export class LLMManager {
   private _providers: Map<string, BaseProvider> = new Map();
   private _modelList: ModelInfo[] = [];
   private _env: Record<string, string> = {};
+  private _hasFetchedPublicModels = false;
 
   private constructor(_env: Record<string, string>) {
     this._registerProvidersFromDirectory();
     this._env = _env;
+    this._fetchPublicModelsFallback();
+  }
+
+  private async _fetchPublicModelsFallback() {
+    if (this._hasFetchedPublicModels) return;
+    this._hasFetchedPublicModels = true;
+
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/models');
+      if (!res.ok) return;
+      const data = await res.json() as any;
+      if (!data?.data || !Array.isArray(data.data)) return;
+
+      const orModels = data.data;
+
+      // Group by prefix to native provider names
+      const providerMapping: Record<string, string> = {
+        'openai/': 'OpenAI',
+        'anthropic/': 'Anthropic',
+        'google/': 'Google',
+        'x-ai/': 'xAI',
+        'perplexity/': 'Perplexity',
+        'mistralai/': 'Mistral',
+        'meta-llama/': 'Groq', // Groq mostly runs exact Llama IDs
+      };
+
+      for (const m of orModels) {
+        if (!m.id) continue;
+        for (const [prefix, providerName] of Object.entries(providerMapping)) {
+          if (m.id.startsWith(prefix)) {
+            const provider = this._providers.get(providerName);
+            if (provider) {
+              const nativeId = m.id.substring(prefix.length);
+              // Avoid duplicates
+              if (!provider.staticModels.some(existing => existing.name === nativeId)) {
+                provider.staticModels.push({
+                  name: nativeId,
+                  label: m.name || nativeId,
+                  provider: providerName,
+                  maxTokenAllowed: m.context_length || 128000,
+                  maxCompletionTokens: m.top_provider?.max_completion_tokens || 8192
+                });
+              }
+            }
+            break;
+          }
+        }
+      }
+
+      this._modelList = Array.from(this._providers.values()).flatMap(p => p.staticModels || []);
+    } catch (e) {
+      logger.warn('Failed to auto-fetch dynamic fallback models via public proxy', e);
+    }
   }
 
   static getInstance(env: Record<string, string> = {}): LLMManager {

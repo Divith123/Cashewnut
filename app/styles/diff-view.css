@@ -4,8 +4,9 @@
 }
 
 .diff-panel-content::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  display: none !important;
+  width: 0 !important;
+  background: transparent !important;
 }
 
 .diff-panel-content::-webkit-scrollbar-track {

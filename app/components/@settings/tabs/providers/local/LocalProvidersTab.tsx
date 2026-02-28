@@ -36,7 +36,7 @@ export default function LocalProvidersTab() {
   // Memoized filtered providers to prevent unnecessary re-renders
   const filteredProviders = useMemo(() => {
     return Object.entries(providers || {})
-      .filter(([key]) => [...LOCAL_PROVIDERS, 'OpenAILike'].includes(key))
+      .filter(([key]) => LOCAL_PROVIDERS.includes(key))
       .map(([key, value]) => {
         const provider = value as IProviderConfig;
         const envKey = providerBaseUrlEnvKeys[key]?.baseUrlKey;
@@ -59,7 +59,7 @@ export default function LocalProvidersTab() {
             ...provider.settings,
             baseUrl: defaultBaseUrl,
           },
-          staticModels: provider.staticModels || [],
+          // staticModels removed: now only dynamic models are used
           getDynamicModels: provider.getDynamicModels,
           getApiKeyLink: provider.getApiKeyLink,
           labelForGetApiKey: provider.labelForGetApiKey,
@@ -230,13 +230,13 @@ export default function LocalProvidersTab() {
                 current.map((m) =>
                   m.name === modelName
                     ? {
-                        ...m,
-                        progress: {
-                          current: data.completed,
-                          total: data.total,
-                          status: data.status,
-                        },
-                      }
+                      ...m,
+                      progress: {
+                        current: data.completed,
+                        total: data.total,
+                        status: data.status,
+                      },
+                    }
                     : m,
                 ),
               );

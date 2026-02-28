@@ -14,6 +14,8 @@ body {
   width: 100%;
   background-color: var(--bolt-elements-bg-depth-1);
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Hide all scrollbars */
+  scrollbar-width: none !important;
 }
 
 :root {
@@ -23,6 +25,14 @@ body {
   --accent-color: rgba(29, 78, 216, var(--gradient-opacity));
 }
 
+/* Hide scrollbars for all browsers */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  background: transparent !important;
+}
 .modern-scrollbar {
   overflow: auto;
 

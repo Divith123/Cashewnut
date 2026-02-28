@@ -12,28 +12,7 @@ export default class GoogleProvider extends BaseProvider {
     apiTokenKey: 'GOOGLE_GENERATIVE_AI_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    /*
-     * Essential fallback models - only the most reliable/stable ones
-     * Gemini 1.5 Pro: 2M context, 8K output limit (verified from API docs)
-     */
-    {
-      name: 'gemini-1.5-pro',
-      label: 'Gemini 1.5 Pro',
-      provider: 'Google',
-      maxTokenAllowed: 2000000,
-      maxCompletionTokens: 8192,
-    },
-
-    // Gemini 1.5 Flash: 1M context, 8K output limit, fast and cost-effective
-    {
-      name: 'gemini-1.5-flash',
-      label: 'Gemini 1.5 Flash',
-      provider: 'Google',
-      maxTokenAllowed: 1000000,
-      maxCompletionTokens: 8192,
-    },
-  ];
+  staticModels: ModelInfo[] = [];
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,

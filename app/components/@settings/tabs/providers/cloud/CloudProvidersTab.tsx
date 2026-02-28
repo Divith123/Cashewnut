@@ -9,7 +9,7 @@ import { classNames } from '~/utils/classNames';
 import { toast } from 'react-toastify';
 import { providerBaseUrlEnvKeys } from '~/utils/constants';
 import { SiAmazon, SiGoogle, SiGithub, SiHuggingface, SiPerplexity, SiOpenai } from 'react-icons/si';
-import { BsRobot, BsCloud } from 'react-icons/bs';
+import { BsRobot, BsCloud, BsGlobe } from 'react-icons/bs';
 import { TbBrain, TbCloudComputing } from 'react-icons/tb';
 import { BiCodeBlock, BiChip } from 'react-icons/bi';
 import { FaCloud, FaBrain } from 'react-icons/fa';
@@ -28,6 +28,7 @@ type ProviderName =
   | 'Hyperbolic'
   | 'Mistral'
   | 'OpenAI'
+  | 'OpenAILike'
   | 'OpenRouter'
   | 'Perplexity'
   | 'Together'
@@ -46,6 +47,7 @@ const PROVIDER_ICONS: Record<ProviderName, IconType> = {
   Hyperbolic: TbCloudComputing,
   Mistral: TbBrain,
   OpenAI: SiOpenai,
+  OpenAILike: BsGlobe,
   OpenRouter: FaCloud,
   Perplexity: SiPerplexity,
   Together: BsCloud,
@@ -57,6 +59,7 @@ const PROVIDER_DESCRIPTIONS: Partial<Record<ProviderName, string>> = {
   Anthropic: 'Access Claude and other Anthropic models',
   Github: 'Use OpenAI models hosted through GitHub infrastructure',
   OpenAI: 'Use GPT-4, GPT-3.5, and other OpenAI models',
+  OpenAILike: 'Connect to any OpenAI-compatible custom API endpoint',
 };
 
 const CloudProvidersTab = () => {
@@ -68,11 +71,11 @@ const CloudProvidersTab = () => {
   // Load and filter providers
   useEffect(() => {
     const newFilteredProviders = Object.entries(settings.providers || {})
-      .filter(([key]) => !['Ollama', 'LMStudio', 'OpenAILike'].includes(key))
+      .filter(([key]) => !['Ollama', 'LMStudio'].includes(key))
       .map(([key, value]) => ({
         name: key,
         settings: value.settings,
-        staticModels: value.staticModels || [],
+        // staticModels removed: now only dynamic models are used
         getDynamicModels: value.getDynamicModels,
         getApiKeyLink: value.getApiKeyLink,
         labelForGetApiKey: value.labelForGetApiKey,

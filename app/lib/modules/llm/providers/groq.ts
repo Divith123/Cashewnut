@@ -13,22 +13,23 @@ export default class GroqProvider extends BaseProvider {
   };
 
   staticModels: ModelInfo[] = [
-    /*
-     * Essential fallback models - only the most stable/reliable ones
-     * Llama 3.1 8B: 128k context, fast and efficient
-     */
     {
-      name: 'llama-3.1-8b-instant',
-      label: 'Llama 3.1 8B',
+      name: 'llama-3.3-70b-versatile',
+      label: 'Llama 3.3 70B',
       provider: 'Groq',
       maxTokenAllowed: 128000,
       maxCompletionTokens: 8192,
     },
-
-    // Llama 3.3 70B: 128k context, most capable model
     {
-      name: 'llama-3.3-70b-versatile',
-      label: 'Llama 3.3 70B',
+      name: 'deepseek-r1-distill-llama-70b',
+      label: 'DeepSeek R1 Llama 70B',
+      provider: 'Groq',
+      maxTokenAllowed: 128000,
+      maxCompletionTokens: 8192,
+    },
+    {
+      name: 'llama-3.1-8b-instant',
+      label: 'Llama 3.1 8B',
       provider: 'Groq',
       maxTokenAllowed: 128000,
       maxCompletionTokens: 8192,
