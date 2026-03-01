@@ -351,12 +351,16 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
           <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
             {!chatStarted && (
-              <div id="intro" className="mt-[12vh] max-w-3xl mx-auto flex flex-col items-center justify-center px-4 lg:px-0">
+              <div
+                id="intro"
+                className="mt-[12vh] max-w-3xl mx-auto flex flex-col items-center justify-center px-4 lg:px-0"
+              >
                 <h1 className="text-4xl lg:text-6xl font-semibold tracking-tighter text-bolt-elements-textPrimary mb-4 animate-fade-in text-center">
                   What will we engineer today?
                 </h1>
                 <p className="text-lg lg:text-xl text-bolt-elements-textTertiary animate-fade-in animation-delay-200 text-center max-w-2xl font-light">
-                  Describe your concept. The Cashewnut multi-agent swarm will architect, design, and deploy it end-to-end.
+                  Describe your concept. The Cashewnut multi-agent swarm will architect, design, and deploy it
+                  end-to-end.
                 </p>
               </div>
             )}

@@ -19,7 +19,11 @@ export function Header() {
         <div className="i-ph:sidebar-simple-duotone text-xl" />
         <a href="/" className="text-2xl font-semibold text-accent flex items-center">
           <img src="/cashewnut-black-animated.svg" alt="Cashewnut" className="h-[28px] inline-block dark:hidden" />
-          <img src="/cashewnut-white-animated.svg" alt="Cashewnut" className="h-[28px] inline-block hidden dark:block" />
+          <img
+            src="/cashewnut-white-animated.svg"
+            alt="Cashewnut"
+            className="h-[28px] inline-block hidden dark:block"
+          />
         </a>
       </div>
       {chat.started && ( // Display ChatDescription and HeaderActionButtons only when the chat has started.

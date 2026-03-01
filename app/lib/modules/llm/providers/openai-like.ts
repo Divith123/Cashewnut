@@ -24,7 +24,7 @@ export default class OpenAILikeProvider extends BaseProvider {
       label: 'Custom Model (Requires Setup)',
       provider: 'OpenAILike',
       maxTokenAllowed: 8000,
-    }
+    },
   ];
 
   async getDynamicModels(

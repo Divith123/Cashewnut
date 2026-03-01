@@ -6,7 +6,10 @@ import { Chat } from '~/components/chat/Chat.client';
 import { Header } from '~/components/header/Header';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Cashewnut — AI Development Company' }, { name: 'description', content: 'Autonomous AI Software Development Company — Multi-Agent Platform' }];
+  return [
+    { title: 'Cashewnut — AI Development Company' },
+    { name: 'description', content: 'Autonomous AI Software Development Company — Multi-Agent Platform' },
+  ];
 };
 
 export const loader = () => json({});

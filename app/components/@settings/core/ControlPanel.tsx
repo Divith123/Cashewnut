@@ -339,7 +339,7 @@ export const ControlPanel = ({ open, onClose }: ControlPanelProps) => {
             </div>
           </RadixDialog.Content>
         </div>
-      </RadixDialog.Portal >
-    </RadixDialog.Root >
+      </RadixDialog.Portal>
+    </RadixDialog.Root>
   );
 };

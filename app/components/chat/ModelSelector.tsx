@@ -646,7 +646,7 @@ export const ModelSelector = ({
               'w-full p-2.5 rounded-lg border border-bolt-elements-borderColor',
               'bg-bolt-elements-prompt-background text-bolt-elements-textPrimary',
               'focus:outline-none focus:ring-2 focus:ring-bolt-elements-focus',
-              'transition-all shadow-sm font-mono text-sm'
+              'transition-all shadow-sm font-mono text-sm',
             )}
             title="Type the exact model ID for your custom endpoint"
           />

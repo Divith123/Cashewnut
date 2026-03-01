@@ -2,7 +2,6 @@ import { json } from '@remix-run/cloudflare';
 import { LLMManager } from '~/lib/modules/llm/manager';
 import type { ModelInfo } from '~/lib/modules/llm/types';
 import type { ProviderInfo } from '~/types/model';
-import type { IProviderSetting } from '~/types/model';
 import { getApiKeysFromCookie, getProviderSettingsFromCookie } from '~/lib/api/cookies';
 
 interface ModelsResponse {
@@ -38,7 +37,16 @@ function getProviderInfo(llmManager: LLMManager) {
     };
   }
 
-  return { providers: cachedProviders ?? [], defaultProvider: cachedDefaultProvider ?? { name: '', staticModels: [], icon: '', getApiKeyLink: '', labelForGetApiKey: '' } };
+  return {
+    providers: cachedProviders ?? [],
+    defaultProvider: cachedDefaultProvider ?? {
+      name: '',
+      staticModels: [],
+      icon: '',
+      getApiKeyLink: '',
+      labelForGetApiKey: '',
+    },
+  };
 }
 
 export async function loader({

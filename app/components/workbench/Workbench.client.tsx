@@ -29,8 +29,6 @@ import { ExportChatButton } from '~/components/chat/chatExportAndImport/ExportCh
 import { useChatHistory } from '~/lib/persistence';
 import { streamingState } from '~/lib/stores/streaming';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { AgentDashboard } from '~/components/agents/AgentDashboard';
-import { companyModeEnabled } from '~/lib/stores/agent';
 
 interface WorkspaceProps {
   chatStarted?: boolean;
@@ -516,9 +514,6 @@ export const Workbench = memo(
                   </View>
                   <View initial={{ x: '100%' }} animate={{ x: selectedView === 'preview' ? '0%' : '100%' }}>
                     <Preview setSelectedElement={setSelectedElement} />
-                  </View>
-                  <View initial={{ x: '100%' }} animate={{ x: selectedView === 'agents' ? '0%' : '100%' }}>
-                    <AgentDashboard />
                   </View>
                 </div>
               </div>

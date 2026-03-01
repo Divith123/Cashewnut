@@ -59,6 +59,7 @@ export default function LocalProvidersTab() {
             ...provider.settings,
             baseUrl: defaultBaseUrl,
           },
+
           // staticModels removed: now only dynamic models are used
           getDynamicModels: provider.getDynamicModels,
           getApiKeyLink: provider.getApiKeyLink,
@@ -230,13 +231,13 @@ export default function LocalProvidersTab() {
                 current.map((m) =>
                   m.name === modelName
                     ? {
-                      ...m,
-                      progress: {
-                        current: data.completed,
-                        total: data.total,
-                        status: data.status,
-                      },
-                    }
+                        ...m,
+                        progress: {
+                          current: data.completed,
+                          total: data.total,
+                          status: data.status,
+                        },
+                      }
                     : m,
                 ),
               );
