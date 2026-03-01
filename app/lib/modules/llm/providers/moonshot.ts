@@ -12,34 +12,7 @@ export default class MoonshotProvider extends BaseProvider {
     apiTokenKey: 'MOONSHOT_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    { name: 'moonshot-v1-8k', label: 'Moonshot v1 8K', provider: 'Moonshot', maxTokenAllowed: 8000 },
-    { name: 'moonshot-v1-32k', label: 'Moonshot v1 32K', provider: 'Moonshot', maxTokenAllowed: 32000 },
-    { name: 'moonshot-v1-128k', label: 'Moonshot v1 128K', provider: 'Moonshot', maxTokenAllowed: 128000 },
-    { name: 'moonshot-v1-auto', label: 'Moonshot v1 Auto', provider: 'Moonshot', maxTokenAllowed: 128000 },
-    {
-      name: 'moonshot-v1-8k-vision-preview',
-      label: 'Moonshot v1 8K Vision',
-      provider: 'Moonshot',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'moonshot-v1-32k-vision-preview',
-      label: 'Moonshot v1 32K Vision',
-      provider: 'Moonshot',
-      maxTokenAllowed: 32000,
-    },
-    {
-      name: 'moonshot-v1-128k-vision-preview',
-      label: 'Moonshot v1 128K Vision',
-      provider: 'Moonshot',
-      maxTokenAllowed: 128000,
-    },
-    { name: 'kimi-latest', label: 'Kimi Latest', provider: 'Moonshot', maxTokenAllowed: 128000 },
-    { name: 'kimi-k2-0711-preview', label: 'Kimi K2 Preview', provider: 'Moonshot', maxTokenAllowed: 128000 },
-    { name: 'kimi-k2-turbo-preview', label: 'Kimi K2 Turbo', provider: 'Moonshot', maxTokenAllowed: 128000 },
-    { name: 'kimi-thinking-preview', label: 'Kimi Thinking', provider: 'Moonshot', maxTokenAllowed: 128000 },
-  ];
+
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,
@@ -59,7 +32,7 @@ export default class MoonshotProvider extends BaseProvider {
     }
 
     try {
-      const response = await fetch('https://api.moonshot.ai/v1/models', {
+      const response = await fetch('https://api.moonshot.cn/v1/models', {
         headers: {
           Authorization: `Bearer ${apiKey}`,
         },
@@ -72,13 +45,10 @@ export default class MoonshotProvider extends BaseProvider {
       }
 
       const data = (await response.json()) as any;
-      const staticModelIds = this.staticModels.map((m) => m.name);
-
       // Filter out models we already have in staticModels
       const dynamicModels =
         data.data
-          ?.filter((model: any) => !staticModelIds.includes(model.id))
-          .map((m: any) => ({
+          ?.map((m: any) => ({
             name: m.id,
             label: `${m.id} (Dynamic)`,
             provider: this.name,

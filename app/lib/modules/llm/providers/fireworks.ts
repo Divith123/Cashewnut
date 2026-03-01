@@ -12,56 +12,7 @@ export default class FireworksProvider extends BaseProvider {
     apiTokenKey: 'FIREWORKS_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'accounts/fireworks/models/qwen3-coder-480b-a35b-instruct',
-      label: 'Qwen3-Coder 480B (Best for Coding)',
-      provider: 'Fireworks',
-      maxTokenAllowed: 262000,
-    },
-    {
-      name: 'accounts/fireworks/models/qwen3-coder-30b-a3b-instruct',
-      label: 'Qwen3-Coder 30B (Fast Coding)',
-      provider: 'Fireworks',
-      maxTokenAllowed: 262000,
-    },
-    {
-      name: 'accounts/fireworks/models/llama-v3p1-405b-instruct',
-      label: 'Llama 3.1 405B Instruct',
-      provider: 'Fireworks',
-      maxTokenAllowed: 128000,
-    },
-    {
-      name: 'accounts/fireworks/models/llama-v3p1-70b-instruct',
-      label: 'Llama 3.1 70B Instruct',
-      provider: 'Fireworks',
-      maxTokenAllowed: 128000,
-    },
-    {
-      name: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
-      label: 'Llama 3.1 8B Instruct',
-      provider: 'Fireworks',
-      maxTokenAllowed: 128000,
-    },
-    {
-      name: 'accounts/fireworks/models/deepseek-r1',
-      label: 'DeepSeek R1 (Reasoning)',
-      provider: 'Fireworks',
-      maxTokenAllowed: 64000,
-    },
-    {
-      name: 'accounts/fireworks/models/qwen2p5-72b-instruct',
-      label: 'Qwen 2.5 72B Instruct',
-      provider: 'Fireworks',
-      maxTokenAllowed: 128000,
-    },
-    {
-      name: 'accounts/fireworks/models/firefunction-v2',
-      label: 'FireFunction V2',
-      provider: 'Fireworks',
-      maxTokenAllowed: 8000,
-    },
-  ];
+
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,
@@ -95,16 +46,10 @@ export default class FireworksProvider extends BaseProvider {
       }
 
       const data = (await response.json()) as any;
-      const staticModelIds = this.staticModels.map((m) => m.name);
-
-      // Filter out models we already have in staticModels
+      // List dynamic models directly
       const dynamicModels =
         data.data
-          ?.filter((model: any) => {
-            const modelPath = `accounts/fireworks/models/${model.id}`;
-            return !staticModelIds.includes(modelPath) && !staticModelIds.includes(model.id);
-          })
-          .map((m: any) => ({
+          ?.map((m: any) => ({
             name: `accounts/fireworks/models/${m.id}`,
             label: `${m.id} (Dynamic)`,
             provider: this.name,

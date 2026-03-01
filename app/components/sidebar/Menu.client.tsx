@@ -337,12 +337,7 @@ export const Menu = () => {
           isSettingsOpen ? 'z-40' : 'z-sidebar',
         )}
       >
-        <div className="h-12 flex items-center justify-between px-4 border-b border-gray-100 dark:border-gray-800/50 bg-gray-50/50 dark:bg-gray-900/50 rounded-tr-2xl">
-          <pre className="text-xs font-mono text-gray-900 dark:text-white leading-none">
-            ██████ ██████ ██████ ██ ██ ███████ ██ ██ ███ ██ ██ ██ ████████ ██ ██ ██ ██ ██ ██ ██ ██ ██ ████ ██ ██ ██ ██
-            ██ ████████ ██████ ███████ █████ ██ █ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ██ ███ ██ ██ ██ ██ ██ ██ ██
-            ██████ ██ ██ ██████ ██ ██ ███████ ███ ███ ██ ████ ██████ ██
-          </pre>
+        <div className="h-12 flex items-center justify-end px-4 border-b border-gray-100 dark:border-gray-800/50 bg-gray-50/50 dark:bg-gray-900/50 rounded-tr-2xl">
           <div className="flex items-center gap-3">
             <HelpButton onClick={() => window.open('https://cashewnut.me/', '_blank')} />
             <span className="font-medium text-sm text-gray-900 dark:text-white truncate">

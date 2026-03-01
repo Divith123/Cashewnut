@@ -12,75 +12,48 @@ export default class HuggingFaceProvider extends BaseProvider {
     apiTokenKey: 'HuggingFace_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'Qwen/Qwen2.5-Coder-32B-Instruct',
-      label: 'Qwen2.5-Coder-32B-Instruct (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: '01-ai/Yi-1.5-34B-Chat',
-      label: 'Yi-1.5-34B-Chat (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'codellama/CodeLlama-34b-Instruct-hf',
-      label: 'CodeLlama-34b-Instruct (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'NousResearch/Hermes-3-Llama-3.1-8B',
-      label: 'Hermes-3-Llama-3.1-8B (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'Qwen/Qwen2.5-Coder-32B-Instruct',
-      label: 'Qwen2.5-Coder-32B-Instruct (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'Qwen/Qwen2.5-72B-Instruct',
-      label: 'Qwen2.5-72B-Instruct (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'meta-llama/Llama-3.1-70B-Instruct',
-      label: 'Llama-3.1-70B-Instruct (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'meta-llama/Llama-3.1-405B',
-      label: 'Llama-3.1-405B (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: '01-ai/Yi-1.5-34B-Chat',
-      label: 'Yi-1.5-34B-Chat (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'codellama/CodeLlama-34b-Instruct-hf',
-      label: 'CodeLlama-34b-Instruct (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'NousResearch/Hermes-3-Llama-3.1-8B',
-      label: 'Hermes-3-Llama-3.1-8B (HuggingFace)',
-      provider: 'HuggingFace',
-      maxTokenAllowed: 8000,
-    },
-  ];
 
+  async getDynamicModels(
+    apiKeys?: Record<string, string>,
+    settings?: IProviderSetting,
+    serverEnv?: Record<string, string>,
+  ): Promise<ModelInfo[]> {
+    const { apiKey } = this.getProviderBaseUrlAndKey({
+      apiKeys,
+      providerSettings: settings,
+      serverEnv: serverEnv as any,
+      defaultBaseUrlKey: '',
+      defaultApiTokenKey: 'HuggingFace_API_KEY',
+    });
+
+    if (!apiKey) {
+      return [];
+    }
+
+    try {
+      const response = await fetch('https://huggingface.co/api/models?pipeline_tag=text-generation&sort=trending&limit=50', {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HuggingFace API error: ${response.status}`);
+      }
+
+      const models: any[] = await response.json();
+
+      return models.map((m) => ({
+        name: m.id,
+        label: `${m.id} (Dynamic)`,
+        provider: this.name,
+        maxTokenAllowed: 32000,
+      }));
+    } catch (error) {
+      console.error('Failed to fetch HuggingFace models:', error);
+      return [];
+    }
+  }
   getModelInstance(options: {
     model: string;
     serverEnv: Env;

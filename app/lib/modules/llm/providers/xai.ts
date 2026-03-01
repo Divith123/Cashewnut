@@ -12,12 +12,44 @@ export default class XAIProvider extends BaseProvider {
     apiTokenKey: 'XAI_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    { name: 'grok-3', label: 'xAI Grok 3', provider: 'xAI', maxTokenAllowed: 131000 },
-    { name: 'grok-3-deepsearch', label: 'xAI Grok 3 DeepSearch', provider: 'xAI', maxTokenAllowed: 131000 },
-    { name: 'grok-3-reasoner', label: 'xAI Grok 3 Reasoner', provider: 'xAI', maxTokenAllowed: 131000 },
-    { name: 'grok-2-1212', label: 'xAI Grok 2', provider: 'xAI', maxTokenAllowed: 131000 },
-  ];
+  async getDynamicModels(
+    apiKeys?: Record<string, string>,
+    settings?: IProviderSetting,
+    serverEnv?: Record<string, string>,
+  ): Promise<ModelInfo[]> {
+    const { apiKey } = this.getProviderBaseUrlAndKey({
+      apiKeys,
+      providerSettings: settings,
+      serverEnv: serverEnv as any,
+      defaultBaseUrlKey: '',
+      defaultApiTokenKey: 'XAI_API_KEY',
+    });
+
+    if (!apiKey) {
+      throw `Missing Api Key configuration for ${this.name} provider`;
+    }
+
+    const response = await fetch(`https://api.x.ai/v1/models`, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    const res = (await response.json()) as any;
+
+    if (!res.data || !Array.isArray(res.data)) {
+      return [];
+    }
+
+    return res.data
+      .filter((model: any) => model.id.startsWith('grok-'))
+      .map((m: any) => ({
+        name: m.id,
+        label: m.id,
+        provider: this.name,
+        maxTokenAllowed: 131000,
+      }));
+  }
 
   getModelInstance(options: {
     model: string;

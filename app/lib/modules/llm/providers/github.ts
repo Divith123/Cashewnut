@@ -12,58 +12,6 @@ export default class GithubProvider extends BaseProvider {
     apiTokenKey: 'GITHUB_API_KEY',
   };
 
-  /*
-   * GitHub Models - Available models through GitHub's native API
-   * Updated for the new GitHub Models API at https://models.github.ai
-   * Model IDs use the format: publisher/model-name
-   */
-  staticModels: ModelInfo[] = [
-    { name: 'openai/gpt-4o', label: 'GPT-4o', provider: 'Github', maxTokenAllowed: 131072, maxCompletionTokens: 4096 },
-    {
-      name: 'openai/gpt-4o-mini',
-      label: 'GPT-4o Mini',
-      provider: 'Github',
-      maxTokenAllowed: 131072,
-      maxCompletionTokens: 4096,
-    },
-    {
-      name: 'openai/o1-preview',
-      label: 'o1-preview',
-      provider: 'Github',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 32000,
-    },
-    {
-      name: 'openai/o1-mini',
-      label: 'o1-mini',
-      provider: 'Github',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 65000,
-    },
-    { name: 'openai/o1', label: 'o1', provider: 'Github', maxTokenAllowed: 200000, maxCompletionTokens: 100000 },
-    {
-      name: 'openai/gpt-4.1',
-      label: 'GPT-4.1',
-      provider: 'Github',
-      maxTokenAllowed: 1048576,
-      maxCompletionTokens: 32768,
-    },
-    {
-      name: 'openai/gpt-4.1-mini',
-      label: 'GPT-4.1-mini',
-      provider: 'Github',
-      maxTokenAllowed: 1048576,
-      maxCompletionTokens: 32768,
-    },
-    {
-      name: 'deepseek/deepseek-r1',
-      label: 'DeepSeek-R1',
-      provider: 'Github',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 4096,
-    },
-  ];
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
@@ -77,22 +25,19 @@ export default class GithubProvider extends BaseProvider {
       defaultApiTokenKey: 'GITHUB_API_KEY',
     });
 
-    if (!apiKey) {
-      console.log('GitHub: No API key found. Make sure GITHUB_API_KEY is set in your .env.local file');
-
-      // Return static models if no API key is available
-      return this.staticModels;
-    }
-
-    console.log('GitHub: API key found, attempting to fetch dynamic models...');
+    console.log('GitHub: Attempting to fetch dynamic models from API...');
 
     try {
-      // Try to fetch dynamic models from GitHub API
-      const response = await fetch('https://models.github.ai/v1/models', {
-        headers: {
+      // Fetch dynamic models from GitHub API (works with or without API key for public model listing)
+      const fetchOptions: RequestInit = {};
+
+      if (apiKey) {
+        fetchOptions.headers = {
           Authorization: `Bearer ${apiKey}`,
-        },
-      });
+        };
+      }
+
+      const response = await fetch('https://models.github.ai/v1/models', fetchOptions);
 
       if (response.ok) {
         const data = (await response.json()) as { data?: any[] };
@@ -111,13 +56,11 @@ export default class GithubProvider extends BaseProvider {
         console.warn('GitHub: API request failed with status:', response.status, response.statusText);
       }
     } catch (error) {
-      console.warn('GitHub: Failed to fetch models, using static models:', error);
+      console.error('GitHub: Failed to fetch models:', error);
     }
 
-    // Fallback to static models
-    console.log('GitHub: Using static models as fallback');
-
-    return this.staticModels;
+    // Return empty array if fetching fails (no static fallback)
+    return [];
   }
 
   getModelInstance(options: {

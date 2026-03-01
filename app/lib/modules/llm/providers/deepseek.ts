@@ -12,43 +12,7 @@ export default class DeepseekProvider extends BaseProvider {
     apiTokenKey: 'DEEPSEEK_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'deepseek-coder',
-      label: 'Deepseek-Coder',
-      provider: 'Deepseek',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'deepseek-chat',
-      label: 'Deepseek-Chat',
-      provider: 'Deepseek',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'deepseek-reasoner',
-      label: 'Deepseek-Reasoner',
-      provider: 'Deepseek',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'deepseek-v3.2',
-      label: 'DeepSeek V3.2 (Coding + Tool Use)',
-      provider: 'Deepseek',
-      maxTokenAllowed: 64000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'deepseek-v3.2-speciale',
-      label: 'DeepSeek V3.2 Speciale (High-Compute)',
-      provider: 'Deepseek',
-      maxTokenAllowed: 64000,
-      maxCompletionTokens: 8192,
-    },
-  ];
+
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,
@@ -81,13 +45,10 @@ export default class DeepseekProvider extends BaseProvider {
       }
 
       const data = (await response.json()) as any;
-      const staticModelIds = this.staticModels.map((m) => m.name);
-
-      // Filter out models we already have in staticModels
+      // Map dynamic models
       const dynamicModels =
         data.data
-          ?.filter((model: any) => !staticModelIds.includes(model.id))
-          .map((m: any) => ({
+          ?.map((m: any) => ({
             name: m.id,
             label: `${m.id} (Dynamic)`,
             provider: this.name,

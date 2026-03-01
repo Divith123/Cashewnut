@@ -12,7 +12,6 @@ export default class GoogleProvider extends BaseProvider {
     apiTokenKey: 'GOOGLE_GENERATIVE_AI_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [];
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,

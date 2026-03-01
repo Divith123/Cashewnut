@@ -12,32 +12,10 @@ export default class ZaiProvider extends BaseProvider {
   config = {
     baseUrlKey: 'ZAI_BASE_URL',
     apiTokenKey: 'ZAI_API_KEY',
-    baseUrl: 'https://api.z.ai/api/coding/paas/v4', //Dedicated endpoint for Coding Plan
+    baseUrl: 'https://open.bigmodel.cn/api/paas/v4', // Official Zhipu API endpoints
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'glm-4.6',
-      label: 'GLM-4.6 (200K)',
-      provider: 'Z.ai',
-      maxTokenAllowed: 200000,
-      maxCompletionTokens: 65536,
-    },
-    {
-      name: 'glm-4.5',
-      label: 'GLM-4.5 (128K)',
-      provider: 'Z.ai',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 65536,
-    },
-    {
-      name: 'glm-4.5-flash',
-      label: 'GLM-4.5 Flash (128K)',
-      provider: 'Z.ai',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 65536,
-    },
-  ];
+
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,
@@ -75,13 +53,10 @@ export default class ZaiProvider extends BaseProvider {
       }
 
       const res = (await response.json()) as any;
-      const staticModelIds = this.staticModels.map((m) => m.name);
-
       // Filter out static models and only include GLM models
       const data =
         res.data?.filter(
-          (model: any) =>
-            model.object === 'model' && model.id?.startsWith('glm-') && !staticModelIds.includes(model.id),
+          (model: any) => model.object === 'model' && model.id?.startsWith('glm-')
         ) || [];
 
       return data.map((m: any) => {

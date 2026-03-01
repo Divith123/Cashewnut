@@ -12,28 +12,7 @@ export default class TogetherProvider extends BaseProvider {
     apiTokenKey: 'TOGETHER_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    /*
-     * Essential fallback models - only the most stable/reliable ones
-     * Llama 3.2 90B Vision: 128k context, multimodal capabilities
-     */
-    {
-      name: 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
-      label: 'Llama 3.2 90B Vision',
-      provider: 'Together',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 8192,
-    },
 
-    // Mixtral 8x7B: 32k context, strong performance
-    {
-      name: 'mistralai/Mixtral-8x7B-Instruct-v0.1',
-      label: 'Mixtral 8x7B Instruct',
-      provider: 'Together',
-      maxTokenAllowed: 32000,
-      maxCompletionTokens: 8192,
-    },
-  ];
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,

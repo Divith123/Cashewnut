@@ -12,32 +12,40 @@ export default class PerplexityProvider extends BaseProvider {
     apiTokenKey: 'PERPLEXITY_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'sonar-pro',
-      label: 'Sonar Pro',
-      provider: 'Perplexity',
-      maxTokenAllowed: 200000,
-    },
-    {
-      name: 'sonar-reasoning-pro',
-      label: 'Sonar Reasoning Pro',
-      provider: 'Perplexity',
-      maxTokenAllowed: 128000,
-    },
-    {
-      name: 'sonar-reasoning',
-      label: 'Sonar Reasoning',
-      provider: 'Perplexity',
-      maxTokenAllowed: 128000,
-    },
-    {
-      name: 'sonar',
-      label: 'Sonar',
-      provider: 'Perplexity',
-      maxTokenAllowed: 128000,
-    },
-  ];
+  async getDynamicModels(
+    apiKeys?: Record<string, string>,
+    settings?: IProviderSetting,
+    serverEnv?: Record<string, string>,
+  ): Promise<ModelInfo[]> {
+    const { apiKey } = this.getProviderBaseUrlAndKey({
+      apiKeys,
+      providerSettings: settings,
+      serverEnv: serverEnv as any,
+      defaultBaseUrlKey: '',
+      defaultApiTokenKey: 'PERPLEXITY_API_KEY',
+    });
+
+    if (!apiKey) {
+      throw `Missing Api Key configuration for ${this.name} provider`;
+    }
+
+    // Perplexity does NOT have a /models enumeration endpoint that exists.
+    // To prevent a completely empty UI, we fallback to hardcoding their official known models
+    // inside getDynamicModels so the provider structure remains intact without triggering 404s.
+    const models = [
+      { id: 'sonar', name: 'Sonar', context_length: 128000 },
+      { id: 'sonar-pro', name: 'Sonar Pro', context_length: 128000 },
+      { id: 'sonar-reasoning', name: 'Sonar Reasoning', context_length: 128000 },
+      { id: 'sonar-reasoning-pro', name: 'Sonar Reasoning Pro', context_length: 128000 },
+    ];
+
+    return models.map((m) => ({
+      name: m.id,
+      label: m.name,
+      provider: this.name,
+      maxTokenAllowed: m.context_length,
+    }));
+  }
 
   getModelInstance(options: {
     model: string;

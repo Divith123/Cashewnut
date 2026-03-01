@@ -12,71 +12,43 @@ export default class MistralProvider extends BaseProvider {
     apiTokenKey: 'MISTRAL_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'open-mistral-7b',
-      label: 'Mistral 7B',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
+  async getDynamicModels(
+    apiKeys?: Record<string, string>,
+    settings?: IProviderSetting,
+    serverEnv?: Record<string, string>,
+  ): Promise<ModelInfo[]> {
+    const { apiKey } = this.getProviderBaseUrlAndKey({
+      apiKeys,
+      providerSettings: settings,
+      serverEnv: serverEnv as any,
+      defaultBaseUrlKey: '',
+      defaultApiTokenKey: 'MISTRAL_API_KEY',
+    });
+
+    if (!apiKey) {
+      throw `Missing Api Key configuration for ${this.name} provider`;
+    }
+
+    const response = await fetch(`https://api.mistral.ai/v1/models`, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    const res = (await response.json()) as any;
+
+    if (!res.data || !Array.isArray(res.data)) {
+      return [];
+    }
+
+    return res.data.map((m: any) => ({
+      name: m.id,
+      label: m.name || m.id,
+      provider: this.name,
+      maxTokenAllowed: 32000,
       maxCompletionTokens: 8192,
-    },
-    {
-      name: 'open-mixtral-8x7b',
-      label: 'Mistral 8x7B',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'open-mixtral-8x22b',
-      label: 'Mistral 8x22B',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'open-codestral-mamba',
-      label: 'Codestral Mamba',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'open-mistral-nemo',
-      label: 'Mistral Nemo',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'ministral-8b-latest',
-      label: 'Mistral 8B',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'mistral-small-latest',
-      label: 'Mistral Small',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'codestral-latest',
-      label: 'Codestral',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'mistral-large-latest',
-      label: 'Mistral Large Latest',
-      provider: 'Mistral',
-      maxTokenAllowed: 8000,
-      maxCompletionTokens: 8192,
-    },
-  ];
+    }));
+  }
 
   getModelInstance(options: {
     model: string;

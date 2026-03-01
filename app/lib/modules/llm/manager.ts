@@ -1,6 +1,6 @@
 import type { IProviderSetting } from '~/types/model';
 import { BaseProvider } from './base-provider';
-import type { ModelInfo, ProviderInfo } from './types';
+import type { ModelInfo, ProviderInfo, VerifiedModel } from './types';
 import * as providers from './registry';
 import { createScopedLogger } from '~/utils/logger';
 
@@ -27,20 +27,14 @@ export class LLMManager {
 
     try {
       const res = await fetch('https://openrouter.ai/api/v1/models');
-
-      if (!res.ok) {
-        return;
-      }
+      if (!res.ok) return;
 
       const data = (await res.json()) as any;
-
-      if (!data?.data || !Array.isArray(data.data)) {
-        return;
-      }
+      if (!data?.data || !Array.isArray(data.data)) return;
 
       const orModels = data.data;
 
-      // Group by prefix to native provider names
+      // Map OpenRouter's prefix standard to our exact provider names
       const providerMapping: Record<string, string> = {
         'openai/': 'OpenAI',
         'anthropic/': 'Anthropic',
@@ -48,13 +42,13 @@ export class LLMManager {
         'x-ai/': 'xAI',
         'perplexity/': 'Perplexity',
         'mistralai/': 'Mistral',
-        'meta-llama/': 'Groq', // Groq mostly runs exact Llama IDs
+        'cohere/': 'Cohere',
+        'deepseek/': 'Deepseek',
+        'meta-llama/': 'Groq', // Llama models can be mapped somewhere fast by default
       };
 
       for (const m of orModels) {
-        if (!m.id) {
-          continue;
-        }
+        if (!m.id) continue;
 
         for (const [prefix, providerName] of Object.entries(providerMapping)) {
           if (m.id.startsWith(prefix)) {
@@ -74,7 +68,6 @@ export class LLMManager {
                 });
               }
             }
-
             break;
           }
         }
@@ -147,10 +140,54 @@ export class LLMManager {
     return this._modelList;
   }
 
+  private _applyVerificationStatus(models: ModelInfo[], verifiedModels: VerifiedModel[]): ModelInfo[] {
+
+    // Providers that are strictly checked by our extractors
+    const strictProviders = ['OpenAI', 'Anthropic', 'Google', 'xAI', 'Mistral', 'Together', 'Groq', 'Github', 'OpenRouter'];
+
+    const filtered: ModelInfo[] = [];
+
+    for (const model of models) {
+      if (!strictProviders.includes(model.provider)) {
+        // Local providers or unmapped ones pass through
+        filtered.push(model);
+        continue;
+      }
+
+      const verifiedRecord = verifiedModels.find(v => v.provider === model.provider && (v.name === model.name));
+
+      if (!verifiedRecord) {
+        // Verification failed or model was not in the official feed
+        filtered.push({
+          ...model,
+          isUnverified: true,
+          label: `${model.label} (Unverified)`,
+        });
+      } else {
+        if (verifiedRecord.status === 'deprecated' || verifiedRecord.status === 'retired') {
+          // Explicitly exclude deprecated or retired models
+          continue;
+        }
+
+        filtered.push({
+          ...model,
+          provenance: {
+            doc_url: verifiedRecord.doc_url,
+            fetched_at: verifiedRecord.fetched_at,
+            status: verifiedRecord.status,
+          }
+        });
+      }
+    }
+
+    return filtered;
+  }
+
   async updateModelList(options: {
     apiKeys?: Record<string, string>;
     providerSettings?: Record<string, IProviderSetting>;
     serverEnv?: Record<string, string>;
+    verifiedModels?: VerifiedModel[];
   }): Promise<ModelInfo[]> {
     const { apiKeys, providerSettings, serverEnv } = options;
 
@@ -199,9 +236,9 @@ export class LLMManager {
     // Combine static and dynamic models
     const modelList = [...dynamicModelsFlat, ...filteredStaticModels];
     modelList.sort((a, b) => a.name.localeCompare(b.name));
-    this._modelList = modelList;
+    this._modelList = this._applyVerificationStatus(modelList, options.verifiedModels || []);
 
-    return modelList;
+    return this._modelList;
   }
   getStaticModelList() {
     return [...this._providers.values()].flatMap((p) => p.staticModels || []);
@@ -212,6 +249,7 @@ export class LLMManager {
       apiKeys?: Record<string, string>;
       providerSettings?: Record<string, IProviderSetting>;
       serverEnv?: Record<string, string>;
+      verifiedModels?: VerifiedModel[];
     },
   ): Promise<ModelInfo[]> {
     const provider = this._providers.get(providerArg.name);
@@ -258,7 +296,7 @@ export class LLMManager {
     const modelList = [...dynamicModels, ...filteredStaticList];
     modelList.sort((a, b) => a.name.localeCompare(b.name));
 
-    return modelList;
+    return this._applyVerificationStatus(modelList, options.verifiedModels || []);
   }
   getStaticModelListFromProvider(providerArg: BaseProvider) {
     const provider = this._providers.get(providerArg.name);

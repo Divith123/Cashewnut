@@ -9,7 +9,7 @@ const MODEL_FETCH_TIMEOUT = 5_000;
 
 export abstract class BaseProvider implements ProviderInfo {
   abstract name: string;
-  abstract staticModels: ModelInfo[];
+  staticModels: ModelInfo[] = [];
   abstract config: ProviderConfig;
   cachedDynamicModels?: {
     cacheId: string;

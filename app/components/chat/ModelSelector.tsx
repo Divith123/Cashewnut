@@ -675,7 +675,9 @@ export const ModelSelector = ({
             tabIndex={0}
           >
             <div className="flex items-center justify-between">
-              <div className="truncate">{modelList.find((m) => m.name === model)?.label || 'Select model'}</div>
+              <div className="truncate">
+                {modelList.find((m) => m.name === model)?.label || (model ? `${model} (Custom)` : 'Select model')}
+              </div>
               <div
                 className={classNames(
                   'i-ph:caret-down w-4 h-4 text-bolt-elements-textSecondary opacity-75',
@@ -789,92 +791,140 @@ export const ModelSelector = ({
                       Loading models...
                     </div>
                   </div>
-                ) : filteredModels.length === 0 ? (
-                  <div className="px-3 py-3 text-sm">
-                    <div className="text-bolt-elements-textTertiary mb-1">
-                      {debouncedModelSearchQuery
-                        ? `No models match "${debouncedModelSearchQuery}"${showFreeModelsOnly ? ' (free only)' : ''}`
-                        : showFreeModelsOnly
-                          ? 'No free models available'
-                          : provider?.name && LOCAL_PROVIDERS.includes(provider.name)
-                            ? `No models found — is ${provider.name} running?`
-                            : 'No models available'}
-                    </div>
-                    {!debouncedModelSearchQuery && provider?.name && LOCAL_PROVIDERS.includes(provider.name) && (
-                      <div className="text-xs text-bolt-elements-textTertiary mt-1">
-                        Make sure {provider.name} is running and has at least one model loaded.
-                        {provider.name === 'Ollama' && ' Try: ollama pull llama3.2'}
-                        {provider.name === 'LMStudio' && ' Load a model in LM Studio first.'}
-                      </div>
-                    )}
-                    {debouncedModelSearchQuery && (
-                      <div className="text-xs text-bolt-elements-textTertiary">
-                        Try searching for model names, context sizes (e.g., "128k", "1M"), or capabilities
-                      </div>
-                    )}
-                    {showFreeModelsOnly && !debouncedModelSearchQuery && (
-                      <div className="text-xs text-bolt-elements-textTertiary">
-                        Try disabling the "Free models only" filter to see all available models
-                      </div>
-                    )}
-                  </div>
                 ) : (
-                  filteredModels.map((modelOption, index) => (
-                    <div
-                      ref={(el) => (modelOptionsRef.current[index] = el)}
-                      key={modelOption.name}
-                      role="option"
-                      aria-selected={model === modelOption.name}
-                      className={classNames(
-                        'px-3 py-2 text-sm cursor-pointer',
-                        'hover:bg-bolt-elements-background-depth-3',
-                        'text-bolt-elements-textPrimary',
-                        'outline-none',
-                        model === modelOption.name || focusedModelIndex === index
-                          ? 'bg-bolt-elements-background-depth-2'
-                          : undefined,
-                        focusedModelIndex === index ? 'ring-1 ring-inset ring-bolt-elements-focus' : undefined,
-                      )}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setModel?.(modelOption.name);
-                        setIsModelDropdownOpen(false);
-                        setModelSearchQuery('');
-                        setDebouncedModelSearchQuery('');
-                      }}
-                      tabIndex={focusedModelIndex === index ? 0 : -1}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="truncate">
-                            <span
-                              dangerouslySetInnerHTML={{
-                                __html: (modelOption as any).highlightedLabel || modelOption.label,
-                              }}
-                            />
-                          </div>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-xs text-bolt-elements-textTertiary">
-                              {formatContextSize(modelOption.maxTokenAllowed)} tokens
-                            </span>
-                            {debouncedModelSearchQuery && (modelOption as any).searchScore > 70 && (
-                              <span className="text-xs text-green-500 font-medium">
-                                {(modelOption as any).searchScore.toFixed(0)}% match
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 ml-2">
-                          {isModelLikelyFree(modelOption, provider?.name) && (
-                            <span className="i-ph:gift text-xs text-purple-400" title="Free model" />
-                          )}
-                          {model === modelOption.name && (
-                            <span className="i-ph:check text-xs text-green-500" title="Selected" />
-                          )}
-                        </div>
+                  <>
+                    {debouncedModelSearchQuery && (
+                      <div
+                        role="option"
+                        className={classNames(
+                          'px-3 py-2 text-sm cursor-pointer',
+                          'hover:bg-bolt-elements-background-depth-3',
+                          'text-bolt-elements-textPrimary',
+                          'flex items-center gap-2 border-b border-bolt-elements-borderColor mb-1 pb-2'
+                        )}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setModel?.(debouncedModelSearchQuery);
+                          setIsModelDropdownOpen(false);
+                          setModelSearchQuery('');
+                          setDebouncedModelSearchQuery('');
+                        }}
+                      >
+                        <span className="i-ph:plus-circle text-blue-400" />
+                        <span>Use custom model: <span className="font-medium text-bolt-elements-textPrimary">"{debouncedModelSearchQuery}"</span></span>
                       </div>
-                    </div>
-                  ))
+                    )}
+
+                    {filteredModels.length === 0 ? (
+                      <div className="px-3 py-3 text-sm">
+                        <div className="text-bolt-elements-textTertiary mb-1">
+                          {debouncedModelSearchQuery
+                            ? `No models match "${debouncedModelSearchQuery}"${showFreeModelsOnly ? ' (free only)' : ''}`
+                            : showFreeModelsOnly
+                              ? 'No free models available'
+                              : provider?.name && LOCAL_PROVIDERS.includes(provider.name)
+                                ? `No models found — is ${provider.name} running?`
+                                : 'No models available'}
+                        </div>
+                        {!debouncedModelSearchQuery && provider?.name && LOCAL_PROVIDERS.includes(provider.name) && (
+                          <div className="text-xs text-bolt-elements-textTertiary mt-1">
+                            Make sure {provider.name} is running and has at least one model loaded.
+                            {provider.name === 'Ollama' && ' Try: ollama pull llama3.2'}
+                            {provider.name === 'LMStudio' && ' Load a model in LM Studio first.'}
+                          </div>
+                        )}
+                        {debouncedModelSearchQuery && (
+                          <div className="text-xs text-bolt-elements-textTertiary">
+                            Try searching for model names, context sizes (e.g., "128k", "1M"), or capabilities
+                          </div>
+                        )}
+                        {showFreeModelsOnly && !debouncedModelSearchQuery && (
+                          <div className="text-xs text-bolt-elements-textTertiary">
+                            Try disabling the "Free models only" filter to see all available models
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      filteredModels.map((modelOption, index) => {
+                        const isUnverified = modelOption.isUnverified;
+                        return (
+                          <div
+                            ref={(el) => (modelOptionsRef.current[index] = el)}
+                            key={modelOption.name}
+                            role="option"
+                            aria-selected={model === modelOption.name}
+                            className={classNames(
+                              'px-3 py-2 text-sm',
+                              'cursor-pointer hover:bg-bolt-elements-background-depth-3 outline-none',
+                              'text-bolt-elements-textPrimary',
+                              (model === modelOption.name || focusedModelIndex === index)
+                                ? 'bg-bolt-elements-background-depth-2'
+                                : undefined,
+                              focusedModelIndex === index ? 'ring-1 ring-inset ring-bolt-elements-focus' : undefined,
+                            )}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModel?.(modelOption.name);
+                              setIsModelDropdownOpen(false);
+                              setModelSearchQuery('');
+                              setDebouncedModelSearchQuery('');
+                            }}
+                            tabIndex={focusedModelIndex === index ? 0 : -1}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1 min-w-0">
+                                <div className="truncate">
+                                  <span
+                                    dangerouslySetInnerHTML={{
+                                      __html: (modelOption as any).highlightedLabel || modelOption.label,
+                                    }}
+                                  />
+                                  {isUnverified && (
+                                    <span className="ml-2 text-xs text-red-500 font-medium tracking-tight">Unverified</span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <span className="text-xs text-bolt-elements-textTertiary">
+                                    {formatContextSize(modelOption.maxTokenAllowed)} tokens
+                                  </span>
+                                  {debouncedModelSearchQuery && (modelOption as any).searchScore > 70 && (
+                                    <span className="text-xs text-green-500 font-medium">
+                                      {(modelOption as any).searchScore.toFixed(0)}% match
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1.5 ml-2">
+                                {modelOption.provenance && (
+                                  <div className="group relative">
+                                    <span className="i-ph:info text-xs text-blue-400 cursor-help" />
+                                    <div className="hidden group-hover:block absolute right-0 z-50 w-64 p-3 mt-1 text-xs rounded-lg bg-bolt-elements-background-depth-3 border border-bolt-elements-borderColor shadow-xl pointer-events-none">
+                                      <p className="mb-1.5 font-semibold text-bolt-elements-textPrimary border-b border-bolt-elements-borderColor pb-1">Verified Model Provenance</p>
+                                      <p className="truncate text-bolt-elements-textSecondary mb-1">
+                                        Source: <a href={modelOption.provenance.doc_url} target="_blank" rel="noreferrer" className="text-blue-400 underline pointer-events-auto">{new URL(modelOption.provenance.doc_url).hostname}</a>
+                                      </p>
+                                      <p className="text-bolt-elements-textSecondary mb-1">
+                                        Synced: {new Date(modelOption.provenance.fetched_at).toLocaleString()}
+                                      </p>
+                                      <p className="text-bolt-elements-textSecondary">
+                                        Status: <span className="uppercase text-[10px] font-bold tracking-wider text-green-500">{modelOption.provenance.status}</span>
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
+                                {isModelLikelyFree(modelOption, provider?.name) && (
+                                  <span className="i-ph:gift text-xs text-purple-400" title="Free model" />
+                                )}
+                                {model === modelOption.name && (
+                                  <span className="i-ph:check text-xs text-green-500" title="Selected" />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })
+                    )}
+                  </>
                 )}
               </div>
             </div>

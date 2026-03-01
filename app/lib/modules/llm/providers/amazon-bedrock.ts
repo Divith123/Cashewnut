@@ -3,6 +3,7 @@ import type { ModelInfo } from '~/lib/modules/llm/types';
 import type { LanguageModelV1 } from 'ai';
 import type { IProviderSetting } from '~/types/model';
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
+import { BedrockClient, ListFoundationModelsCommand } from '@aws-sdk/client-bedrock';
 
 interface AWSBedRockConfig {
   region: string;
@@ -19,50 +20,7 @@ export default class AmazonBedrockProvider extends BaseProvider {
     apiTokenKey: 'AWS_BEDROCK_CONFIG',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'anthropic.claude-3-5-sonnet-20241022-v2:0',
-      label: 'Claude 3.5 Sonnet v2 (Bedrock)',
-      provider: 'AmazonBedrock',
-      maxTokenAllowed: 200000,
-    },
-    {
-      name: 'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      label: 'Claude 3.5 Sonnet (Bedrock)',
-      provider: 'AmazonBedrock',
-      maxTokenAllowed: 4096,
-    },
-    {
-      name: 'anthropic.claude-3-sonnet-20240229-v1:0',
-      label: 'Claude 3 Sonnet (Bedrock)',
-      provider: 'AmazonBedrock',
-      maxTokenAllowed: 4096,
-    },
-    {
-      name: 'anthropic.claude-3-haiku-20240307-v1:0',
-      label: 'Claude 3 Haiku (Bedrock)',
-      provider: 'AmazonBedrock',
-      maxTokenAllowed: 4096,
-    },
-    {
-      name: 'amazon.nova-pro-v1:0',
-      label: 'Amazon Nova Pro (Bedrock)',
-      provider: 'AmazonBedrock',
-      maxTokenAllowed: 5120,
-    },
-    {
-      name: 'amazon.nova-lite-v1:0',
-      label: 'Amazon Nova Lite (Bedrock)',
-      provider: 'AmazonBedrock',
-      maxTokenAllowed: 5120,
-    },
-    {
-      name: 'mistral.mistral-large-2402-v1:0',
-      label: 'Mistral Large 24.02 (Bedrock)',
-      provider: 'AmazonBedrock',
-      maxTokenAllowed: 8192,
-    },
-  ];
+
 
   private _parseAndValidateConfig(apiKey: string): AWSBedRockConfig {
     let parsedConfig: AWSBedRockConfig;
@@ -89,6 +47,76 @@ export default class AmazonBedrockProvider extends BaseProvider {
       secretAccessKey,
       ...(sessionToken && { sessionToken }),
     };
+  }
+
+  async getDynamicModels(
+    apiKeys?: Record<string, string>,
+    settings?: IProviderSetting,
+    serverEnv?: Record<string, string>,
+  ): Promise<ModelInfo[]> {
+    const { apiKey } = this.getProviderBaseUrlAndKey({
+      apiKeys,
+      providerSettings: settings,
+      serverEnv: serverEnv as any,
+      defaultBaseUrlKey: '',
+      defaultApiTokenKey: 'AWS_BEDROCK_CONFIG',
+    });
+
+    if (!apiKey) {
+      return [];
+    }
+
+    try {
+      const config = this._parseAndValidateConfig(apiKey);
+      const client = new BedrockClient({
+        region: config.region,
+        credentials: {
+          accessKeyId: config.accessKeyId,
+          secretAccessKey: config.secretAccessKey,
+          sessionToken: config.sessionToken,
+        },
+      });
+
+      const command = new ListFoundationModelsCommand({});
+      const response = await client.send(command);
+
+      const models = response.modelSummaries || [];
+
+      // Filter to only include text/chat capable models
+      const textModels = models.filter(m =>
+        m.outputModalities?.includes('TEXT') &&
+        m.modelLifecycle?.status === 'ACTIVE'
+      );
+
+      return textModels.map((m) => {
+        let contextWindow = 32000; // default safe fallback
+
+        // Try to estimate context window based on model ID since Bedrock API doesn't return it
+        const id = m.modelId || '';
+        if (id.includes('claude-3-5-sonnet') || id.includes('claude-3-haiku') || id.includes('claude-3-opus') || id.includes('claude-3-sonnet')) {
+          contextWindow = 200000;
+        } else if (id.includes('llama3-1') || id.includes('llama3-2') || id.includes('llama3-8b') || id.includes('llama3-70b')) {
+          contextWindow = 128000;
+        } else if (id.includes('mistral-large')) {
+          contextWindow = 128000;
+        } else if (id.includes('cohere.command-r')) {
+          contextWindow = 128000;
+        } else if (id.includes('titan-text-premier')) {
+          contextWindow = 32000;
+        }
+
+        return {
+          name: m.modelId as string,
+          label: `${m.providerName} ${m.modelName} (Dynamic)`,
+          provider: this.name,
+          maxTokenAllowed: contextWindow,
+        };
+      });
+
+    } catch (error) {
+      console.error('Failed to fetch Amazon Bedrock models:', error);
+      return [];
+    }
   }
 
   getModelInstance(options: {

@@ -18,6 +18,7 @@ import XAIProvider from './providers/xai';
 import HyperbolicProvider from './providers/hyperbolic';
 import AmazonBedrockProvider from './providers/amazon-bedrock';
 import GithubProvider from './providers/github';
+import GithubCopilotProvider from './providers/github-copilot';
 import MoonshotProvider from './providers/moonshot';
 import ZaiProvider from './providers/z-ai';
 
@@ -43,5 +44,6 @@ export {
   LMStudioProvider,
   AmazonBedrockProvider,
   GithubProvider,
+  GithubCopilotProvider,
   ZaiProvider,
 };

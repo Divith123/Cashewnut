@@ -12,7 +12,6 @@ export default class AnthropicProvider extends BaseProvider {
     apiTokenKey: 'ANTHROPIC_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [];
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,
@@ -39,9 +38,13 @@ export default class AnthropicProvider extends BaseProvider {
     });
 
     const res = (await response.json()) as any;
-    const staticModelIds = this.staticModels.map((m) => m.name);
 
-    const data = res.data.filter((model: any) => model.type === 'model' && !staticModelIds.includes(model.id));
+    if (!res || !res.data || !Array.isArray(res.data)) {
+      const errorMsg = res?.error?.message || response.statusText;
+      throw new Error(`Anthropic API error: ${errorMsg}`);
+    }
+
+    const data = res.data.filter((model: any) => model.type === 'model');
 
     return data.map((m: any) => {
       // Get accurate context window from Anthropic API

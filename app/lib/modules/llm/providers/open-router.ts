@@ -26,26 +26,6 @@ export default class OpenRouterProvider extends BaseProvider {
     apiTokenKey: 'OPEN_ROUTER_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    /*
-     * Essential fallback models - only the most stable/reliable ones
-     * Claude 3.5 Sonnet via OpenRouter: 200k context
-     */
-    {
-      name: 'anthropic/claude-3.5-sonnet',
-      label: 'Claude 3.5 Sonnet',
-      provider: 'OpenRouter',
-      maxTokenAllowed: 200000,
-    },
-
-    // GPT-4o via OpenRouter: 128k context
-    {
-      name: 'openai/gpt-4o',
-      label: 'GPT-4o',
-      provider: 'OpenRouter',
-      maxTokenAllowed: 128000,
-    },
-  ];
 
   async getDynamicModels(
     _apiKeys?: Record<string, string>,

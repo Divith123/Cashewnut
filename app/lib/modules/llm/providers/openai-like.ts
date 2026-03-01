@@ -18,14 +18,6 @@ export default class OpenAILikeProvider extends BaseProvider {
     modelsKey: 'OPENAI_LIKE_API_MODELS',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'Custom-Model',
-      label: 'Custom Model (Requires Setup)',
-      provider: 'OpenAILike',
-      maxTokenAllowed: 8000,
-    },
-  ];
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,

@@ -12,29 +12,7 @@ export default class GroqProvider extends BaseProvider {
     apiTokenKey: 'GROQ_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'llama-3.3-70b-versatile',
-      label: 'Llama 3.3 70B',
-      provider: 'Groq',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'deepseek-r1-distill-llama-70b',
-      label: 'DeepSeek R1 Llama 70B',
-      provider: 'Groq',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 8192,
-    },
-    {
-      name: 'llama-3.1-8b-instant',
-      label: 'Llama 3.1 8B',
-      provider: 'Groq',
-      maxTokenAllowed: 128000,
-      maxCompletionTokens: 8192,
-    },
-  ];
+
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,

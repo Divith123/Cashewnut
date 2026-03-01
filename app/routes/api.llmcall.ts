@@ -8,6 +8,7 @@ import { LLMManager } from '~/lib/modules/llm/manager';
 import type { ModelInfo } from '~/lib/modules/llm/types';
 import { getApiKeysFromCookie, getProviderSettingsFromCookie } from '~/lib/api/cookies';
 import { createScopedLogger } from '~/utils/logger';
+import { ModelSyncService } from '~/lib/modules/llm/model-sync.server';
 
 export async function action(args: ActionFunctionArgs) {
   return llmCallAction(args);
@@ -19,7 +20,13 @@ async function getModelList(options: {
   serverEnv?: Record<string, string>;
 }) {
   const llmManager = LLMManager.getInstance(import.meta.env);
-  return llmManager.updateModelList(options);
+  const syncService = ModelSyncService.getInstance();
+  await syncService.loadVerifiedModels();
+
+  return llmManager.updateModelList({
+    ...options,
+    verifiedModels: syncService.getVerifiedModels()
+  });
 }
 
 const logger = createScopedLogger('api.llmcall');

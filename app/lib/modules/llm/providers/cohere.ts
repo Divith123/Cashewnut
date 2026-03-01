@@ -12,66 +12,44 @@ export default class CohereProvider extends BaseProvider {
     apiTokenKey: 'COHERE_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'command-r-plus-08-2024',
-      label: 'Command R plus Latest',
-      provider: 'Cohere',
-      maxTokenAllowed: 4096,
-      maxCompletionTokens: 4000,
-    },
-    {
-      name: 'command-r-08-2024',
-      label: 'Command R Latest',
-      provider: 'Cohere',
-      maxTokenAllowed: 4096,
-      maxCompletionTokens: 4000,
-    },
-    {
-      name: 'command-r-plus',
-      label: 'Command R plus',
-      provider: 'Cohere',
-      maxTokenAllowed: 4096,
-      maxCompletionTokens: 4000,
-    },
-    { name: 'command-r', label: 'Command R', provider: 'Cohere', maxTokenAllowed: 4096, maxCompletionTokens: 4000 },
-    { name: 'command', label: 'Command', provider: 'Cohere', maxTokenAllowed: 4096, maxCompletionTokens: 4000 },
-    {
-      name: 'command-nightly',
-      label: 'Command Nightly',
-      provider: 'Cohere',
-      maxTokenAllowed: 4096,
-      maxCompletionTokens: 4000,
-    },
-    {
-      name: 'command-light',
-      label: 'Command Light',
-      provider: 'Cohere',
-      maxTokenAllowed: 4096,
-      maxCompletionTokens: 4000,
-    },
-    {
-      name: 'command-light-nightly',
-      label: 'Command Light Nightly',
-      provider: 'Cohere',
-      maxTokenAllowed: 4096,
-      maxCompletionTokens: 4000,
-    },
-    {
-      name: 'c4ai-aya-expanse-8b',
-      label: 'c4AI Aya Expanse 8b',
-      provider: 'Cohere',
-      maxTokenAllowed: 4096,
-      maxCompletionTokens: 4000,
-    },
-    {
-      name: 'c4ai-aya-expanse-32b',
-      label: 'c4AI Aya Expanse 32b',
-      provider: 'Cohere',
-      maxTokenAllowed: 4096,
-      maxCompletionTokens: 4000,
-    },
-  ];
+  async getDynamicModels(
+    apiKeys?: Record<string, string>,
+    settings?: IProviderSetting,
+    serverEnv?: Record<string, string>,
+  ): Promise<ModelInfo[]> {
+    const { apiKey } = this.getProviderBaseUrlAndKey({
+      apiKeys,
+      providerSettings: settings,
+      serverEnv: serverEnv as any,
+      defaultBaseUrlKey: '',
+      defaultApiTokenKey: 'COHERE_API_KEY',
+    });
+
+    if (!apiKey) {
+      throw `Missing Api Key configuration for ${this.name} provider`;
+    }
+
+    const response = await fetch(`https://api.cohere.com/v1/models`, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    const res = (await response.json()) as any;
+
+    if (!res.models || !Array.isArray(res.models)) {
+      return [];
+    }
+
+    return res.models
+      .filter((model: any) => model.endpoints && model.endpoints.includes('chat'))
+      .map((m: any) => ({
+        name: m.name,
+        label: m.name,
+        provider: this.name,
+        maxTokenAllowed: m.context_length || 8000,
+      }));
+  }
 
   getModelInstance(options: {
     model: string;

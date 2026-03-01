@@ -16,7 +16,6 @@ export default class LMStudioProvider extends BaseProvider {
     baseUrl: 'http://localhost:1234/',
   };
 
-  staticModels: ModelInfo[] = [];
 
   private _resolveBaseUrl(
     apiKeys?: Record<string, string>,

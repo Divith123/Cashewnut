@@ -37,7 +37,6 @@ export default class OllamaProvider extends BaseProvider {
     baseUrlKey: 'OLLAMA_API_BASE_URL',
   };
 
-  staticModels: ModelInfo[] = [];
 
   getDefaultNumCtx(serverEnv?: Env): number {
     const envRecord = this.convertEnvToRecord(serverEnv);

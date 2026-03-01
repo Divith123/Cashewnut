@@ -68,7 +68,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
   return (
     <div
       className={classNames(
-        'relative bg-bolt-elements-background-depth-1 p-3 rounded-2xl border-2 border-bolt-elements-borderColor shadow-xl relative w-full max-w-chat mx-auto z-prompt transition-shadow duration-300 hover:shadow-2xl hover:border-bolt-elements-borderColorActive',
+        'relative bg-bolt-elements-background-depth-1 p-4 rounded-[28px] border border-bolt-elements-borderColor shadow-sm w-full max-w-chat mx-auto z-prompt transition-shadow duration-300 hover:shadow-md hover:border-bolt-elements-borderColorActive',
       )}
     >
       <div>
@@ -136,7 +136,7 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
         </div>
       )}
       <div
-        className={classNames('relative shadow-xs border border-bolt-elements-borderColor backdrop-blur rounded-lg')}
+        className={classNames('relative shadow-xs border border-bolt-elements-borderColor backdrop-blur rounded-2xl')}
       >
         <textarea
           ref={props.textareaRef}

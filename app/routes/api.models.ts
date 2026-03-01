@@ -3,6 +3,7 @@ import { LLMManager } from '~/lib/modules/llm/manager';
 import type { ModelInfo } from '~/lib/modules/llm/types';
 import type { ProviderInfo } from '~/types/model';
 import { getApiKeysFromCookie, getProviderSettingsFromCookie } from '~/lib/api/cookies';
+import { ModelSyncService } from '~/lib/modules/llm/model-sync.server';
 
 interface ModelsResponse {
   modelList: ModelInfo[];
@@ -71,6 +72,11 @@ export async function loader({
 
   const { providers, defaultProvider } = getProviderInfo(llmManager);
 
+  // Fetch verified models purely on the server to prevent Vite client bundling issues
+  const syncService = ModelSyncService.getInstance();
+  await syncService.loadVerifiedModels();
+  const verifiedModels = syncService.getVerifiedModels();
+
   let modelList: ModelInfo[] = [];
 
   if (params.provider) {
@@ -82,6 +88,7 @@ export async function loader({
         apiKeys,
         providerSettings,
         serverEnv: context.cloudflare?.env,
+        verifiedModels,
       });
     }
   } else {
@@ -90,6 +97,7 @@ export async function loader({
       apiKeys,
       providerSettings,
       serverEnv: context.cloudflare?.env,
+      verifiedModels,
     });
   }
 

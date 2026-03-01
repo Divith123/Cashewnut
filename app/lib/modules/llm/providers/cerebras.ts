@@ -12,50 +12,7 @@ export default class CerebrasProvider extends BaseProvider {
     apiTokenKey: 'CEREBRAS_API_KEY',
   };
 
-  staticModels: ModelInfo[] = [
-    {
-      name: 'qwen3-coder-480b',
-      label: 'Qwen3-Coder 480B (2000 tok/s, Best for Coding)',
-      provider: 'Cerebras',
-      maxTokenAllowed: 262000,
-    },
-    {
-      name: 'llama3.1-8b',
-      label: 'Llama 3.1 8B',
-      provider: 'Cerebras',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'gpt-oss-120b',
-      label: 'GPT OSS 120B (Reasoning)',
-      provider: 'Cerebras',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'qwen-3-235b-a22b-instruct-2507',
-      label: 'Qwen 3 235B A22B Instruct',
-      provider: 'Cerebras',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'qwen-3-235b-a22b-thinking-2507',
-      label: 'Qwen 3 235B A22B Thinking',
-      provider: 'Cerebras',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'zai-glm-4.6',
-      label: 'ZAI GLM 4.6 (Coding: 73.8% SWE-bench)',
-      provider: 'Cerebras',
-      maxTokenAllowed: 8000,
-    },
-    {
-      name: 'zai-glm-4.7',
-      label: 'ZAI GLM 4.7 (Reasoning)',
-      provider: 'Cerebras',
-      maxTokenAllowed: 8000,
-    },
-  ];
+
 
   async getDynamicModels(
     apiKeys?: Record<string, string>,
@@ -88,13 +45,10 @@ export default class CerebrasProvider extends BaseProvider {
       }
 
       const data = (await response.json()) as any;
-      const staticModelIds = this.staticModels.map((m) => m.name);
-
-      // Filter out models we already have in staticModels
+      // Map over dynamic models directly
       const dynamicModels =
         data.data
-          ?.filter((model: any) => !staticModelIds.includes(model.id))
-          .map((m: any) => ({
+          ?.map((m: any) => ({
             name: m.id,
             label: `${m.id} (Dynamic)`,
             provider: this.name,
