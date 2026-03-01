@@ -470,17 +470,6 @@ export const Workbench = memo(
                   {selectedView === 'diff' && (
                     <FileModifiedDropdown fileHistory={fileHistory} onSelectFile={handleSelectFile} />
                   )}
-                  <button
-                    onClick={() => setSelectedView('agents')}
-                    className={classNames(
-                      'flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full transition-colors',
-                      selectedView === 'agents'
-                        ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                        : 'bg-bolt-elements-background-depth-1 text-bolt-elements-item-contentDefault hover:text-bolt-elements-item-contentActive',
-                    )}
-                  >
-                    🏢 Agents
-                  </button>
                   <IconButton
                     icon="i-ph:x-circle"
                     className="-mr-1"
