@@ -113,6 +113,9 @@ export default defineConfig({
     ['b', {}],
   ],
   theme: {
+    fontFamily: {
+      sans: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    },
     colors: {
       ...COLOR_PRIMITIVES,
       bolt: {
