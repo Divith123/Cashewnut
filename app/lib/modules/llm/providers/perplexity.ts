@@ -29,9 +29,11 @@ export default class PerplexityProvider extends BaseProvider {
       throw `Missing Api Key configuration for ${this.name} provider`;
     }
 
-    // Perplexity does NOT have a /models enumeration endpoint that exists.
-    // To prevent a completely empty UI, we fallback to hardcoding their official known models
-    // inside getDynamicModels so the provider structure remains intact without triggering 404s.
+    /*
+     * Perplexity does NOT have a /models enumeration endpoint that exists.
+     * To prevent a completely empty UI, we fallback to hardcoding their official known models
+     * inside getDynamicModels so the provider structure remains intact without triggering 404s.
+     */
     const models = [
       { id: 'sonar', name: 'Sonar', context_length: 128000 },
       { id: 'sonar-pro', name: 'Sonar Pro', context_length: 128000 },

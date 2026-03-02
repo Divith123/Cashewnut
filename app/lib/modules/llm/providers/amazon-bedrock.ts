@@ -20,8 +20,6 @@ export default class AmazonBedrockProvider extends BaseProvider {
     apiTokenKey: 'AWS_BEDROCK_CONFIG',
   };
 
-
-
   private _parseAndValidateConfig(apiKey: string): AWSBedRockConfig {
     let parsedConfig: AWSBedRockConfig;
 
@@ -83,9 +81,8 @@ export default class AmazonBedrockProvider extends BaseProvider {
       const models = response.modelSummaries || [];
 
       // Filter to only include text/chat capable models
-      const textModels = models.filter(m =>
-        m.outputModalities?.includes('TEXT') &&
-        m.modelLifecycle?.status === 'ACTIVE'
+      const textModels = models.filter(
+        (m) => m.outputModalities?.includes('TEXT') && m.modelLifecycle?.status === 'ACTIVE',
       );
 
       return textModels.map((m) => {
@@ -93,9 +90,20 @@ export default class AmazonBedrockProvider extends BaseProvider {
 
         // Try to estimate context window based on model ID since Bedrock API doesn't return it
         const id = m.modelId || '';
-        if (id.includes('claude-3-5-sonnet') || id.includes('claude-3-haiku') || id.includes('claude-3-opus') || id.includes('claude-3-sonnet')) {
+
+        if (
+          id.includes('claude-3-5-sonnet') ||
+          id.includes('claude-3-haiku') ||
+          id.includes('claude-3-opus') ||
+          id.includes('claude-3-sonnet')
+        ) {
           contextWindow = 200000;
-        } else if (id.includes('llama3-1') || id.includes('llama3-2') || id.includes('llama3-8b') || id.includes('llama3-70b')) {
+        } else if (
+          id.includes('llama3-1') ||
+          id.includes('llama3-2') ||
+          id.includes('llama3-8b') ||
+          id.includes('llama3-70b')
+        ) {
           contextWindow = 128000;
         } else if (id.includes('mistral-large')) {
           contextWindow = 128000;
@@ -112,7 +120,6 @@ export default class AmazonBedrockProvider extends BaseProvider {
           maxTokenAllowed: contextWindow,
         };
       });
-
     } catch (error) {
       console.error('Failed to fetch Amazon Bedrock models:', error);
       return [];

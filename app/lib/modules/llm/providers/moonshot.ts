@@ -12,8 +12,6 @@ export default class MoonshotProvider extends BaseProvider {
     apiTokenKey: 'MOONSHOT_API_KEY',
   };
 
-
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
@@ -45,15 +43,15 @@ export default class MoonshotProvider extends BaseProvider {
       }
 
       const data = (await response.json()) as any;
+
       // Filter out models we already have in staticModels
       const dynamicModels =
-        data.data
-          ?.map((m: any) => ({
-            name: m.id,
-            label: `${m.id} (Dynamic)`,
-            provider: this.name,
-            maxTokenAllowed: 128000, // Kimi models typically have large context
-          })) || [];
+        data.data?.map((m: any) => ({
+          name: m.id,
+          label: `${m.id} (Dynamic)`,
+          provider: this.name,
+          maxTokenAllowed: 128000, // Kimi models typically have large context
+        })) || [];
 
       return dynamicModels;
     } catch (error) {

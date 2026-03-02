@@ -12,8 +12,6 @@ export default class DeepseekProvider extends BaseProvider {
     apiTokenKey: 'DEEPSEEK_API_KEY',
   };
 
-
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
@@ -45,16 +43,16 @@ export default class DeepseekProvider extends BaseProvider {
       }
 
       const data = (await response.json()) as any;
+
       // Map dynamic models
       const dynamicModels =
-        data.data
-          ?.map((m: any) => ({
-            name: m.id,
-            label: `${m.id} (Dynamic)`,
-            provider: this.name,
-            maxTokenAllowed: 64000, // Default, adjust per model if available
-            maxCompletionTokens: 8192,
-          })) || [];
+        data.data?.map((m: any) => ({
+          name: m.id,
+          label: `${m.id} (Dynamic)`,
+          provider: this.name,
+          maxTokenAllowed: 64000, // Default, adjust per model if available
+          maxCompletionTokens: 8192,
+        })) || [];
 
       return dynamicModels;
     } catch (error) {

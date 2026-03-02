@@ -15,8 +15,6 @@ export default class ZaiProvider extends BaseProvider {
     baseUrl: 'https://open.bigmodel.cn/api/paas/v4', // Official Zhipu API endpoints
   };
 
-
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
@@ -53,11 +51,9 @@ export default class ZaiProvider extends BaseProvider {
       }
 
       const res = (await response.json()) as any;
+
       // Filter out static models and only include GLM models
-      const data =
-        res.data?.filter(
-          (model: any) => model.object === 'model' && model.id?.startsWith('glm-')
-        ) || [];
+      const data = res.data?.filter((model: any) => model.object === 'model' && model.id?.startsWith('glm-')) || [];
 
       return data.map((m: any) => {
         let contextWindow = 128000;

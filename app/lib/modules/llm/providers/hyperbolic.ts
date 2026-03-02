@@ -12,8 +12,6 @@ export default class HyperbolicProvider extends BaseProvider {
     apiTokenKey: 'HYPERBOLIC_API_KEY',
   };
 
-
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,

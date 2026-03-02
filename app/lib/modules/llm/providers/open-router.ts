@@ -26,7 +26,6 @@ export default class OpenRouterProvider extends BaseProvider {
     apiTokenKey: 'OPEN_ROUTER_API_KEY',
   };
 
-
   async getDynamicModels(
     _apiKeys?: Record<string, string>,
     _settings?: IProviderSetting,

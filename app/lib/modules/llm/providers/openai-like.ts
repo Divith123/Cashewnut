@@ -18,7 +18,6 @@ export default class OpenAILikeProvider extends BaseProvider {
     modelsKey: 'OPENAI_LIKE_API_MODELS',
   };
 
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,

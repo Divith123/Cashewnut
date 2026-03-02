@@ -27,10 +27,16 @@ export class LLMManager {
 
     try {
       const res = await fetch('https://openrouter.ai/api/v1/models');
-      if (!res.ok) return;
+
+      if (!res.ok) {
+        return;
+      }
 
       const data = (await res.json()) as any;
-      if (!data?.data || !Array.isArray(data.data)) return;
+
+      if (!data?.data || !Array.isArray(data.data)) {
+        return;
+      }
 
       const orModels = data.data;
 
@@ -48,7 +54,9 @@ export class LLMManager {
       };
 
       for (const m of orModels) {
-        if (!m.id) continue;
+        if (!m.id) {
+          continue;
+        }
 
         for (const [prefix, providerName] of Object.entries(providerMapping)) {
           if (m.id.startsWith(prefix)) {
@@ -68,6 +76,7 @@ export class LLMManager {
                 });
               }
             }
+
             break;
           }
         }
@@ -141,9 +150,18 @@ export class LLMManager {
   }
 
   private _applyVerificationStatus(models: ModelInfo[], verifiedModels: VerifiedModel[]): ModelInfo[] {
-
     // Providers that are strictly checked by our extractors
-    const strictProviders = ['OpenAI', 'Anthropic', 'Google', 'xAI', 'Mistral', 'Together', 'Groq', 'Github', 'OpenRouter'];
+    const strictProviders = [
+      'OpenAI',
+      'Anthropic',
+      'Google',
+      'xAI',
+      'Mistral',
+      'Together',
+      'Groq',
+      'Github',
+      'OpenRouter',
+    ];
 
     const filtered: ModelInfo[] = [];
 
@@ -154,7 +172,7 @@ export class LLMManager {
         continue;
       }
 
-      const verifiedRecord = verifiedModels.find(v => v.provider === model.provider && (v.name === model.name));
+      const verifiedRecord = verifiedModels.find((v) => v.provider === model.provider && v.name === model.name);
 
       if (!verifiedRecord) {
         // Verification failed or model was not in the official feed
@@ -175,7 +193,7 @@ export class LLMManager {
             doc_url: verifiedRecord.doc_url,
             fetched_at: verifiedRecord.fetched_at,
             status: verifiedRecord.status,
-          }
+          },
         });
       }
     }

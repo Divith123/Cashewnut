@@ -12,7 +12,6 @@ export default class OpenAIProvider extends BaseProvider {
     apiTokenKey: 'OPENAI_API_KEY',
   };
 
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,

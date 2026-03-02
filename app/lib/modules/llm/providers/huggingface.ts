@@ -12,7 +12,6 @@ export default class HuggingFaceProvider extends BaseProvider {
     apiTokenKey: 'HuggingFace_API_KEY',
   };
 
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
@@ -31,11 +30,14 @@ export default class HuggingFaceProvider extends BaseProvider {
     }
 
     try {
-      const response = await fetch('https://huggingface.co/api/models?pipeline_tag=text-generation&sort=trending&limit=50', {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
+      const response = await fetch(
+        'https://huggingface.co/api/models?pipeline_tag=text-generation&sort=trending&limit=50',
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`HuggingFace API error: ${response.status}`);

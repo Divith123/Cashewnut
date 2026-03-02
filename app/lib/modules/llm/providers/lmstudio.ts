@@ -16,7 +16,6 @@ export default class LMStudioProvider extends BaseProvider {
     baseUrl: 'http://localhost:1234/',
   };
 
-
   private _resolveBaseUrl(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,

@@ -12,8 +12,6 @@ export default class CerebrasProvider extends BaseProvider {
     apiTokenKey: 'CEREBRAS_API_KEY',
   };
 
-
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
@@ -45,15 +43,15 @@ export default class CerebrasProvider extends BaseProvider {
       }
 
       const data = (await response.json()) as any;
+
       // Map over dynamic models directly
       const dynamicModels =
-        data.data
-          ?.map((m: any) => ({
-            name: m.id,
-            label: `${m.id} (Dynamic)`,
-            provider: this.name,
-            maxTokenAllowed: 32000, // Default, Cerebras typically has good context
-          })) || [];
+        data.data?.map((m: any) => ({
+          name: m.id,
+          label: `${m.id} (Dynamic)`,
+          provider: this.name,
+          maxTokenAllowed: 32000, // Default, Cerebras typically has good context
+        })) || [];
 
       return dynamicModels;
     } catch (error) {

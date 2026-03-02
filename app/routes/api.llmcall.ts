@@ -25,7 +25,7 @@ async function getModelList(options: {
 
   return llmManager.updateModelList({
     ...options,
-    verifiedModels: syncService.getVerifiedModels()
+    verifiedModels: syncService.getVerifiedModels(),
   });
 }
 

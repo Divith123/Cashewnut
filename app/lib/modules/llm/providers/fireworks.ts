@@ -12,8 +12,6 @@ export default class FireworksProvider extends BaseProvider {
     apiTokenKey: 'FIREWORKS_API_KEY',
   };
 
-
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
@@ -46,15 +44,15 @@ export default class FireworksProvider extends BaseProvider {
       }
 
       const data = (await response.json()) as any;
+
       // List dynamic models directly
       const dynamicModels =
-        data.data
-          ?.map((m: any) => ({
-            name: `accounts/fireworks/models/${m.id}`,
-            label: `${m.id} (Dynamic)`,
-            provider: this.name,
-            maxTokenAllowed: m.context_length || 128000,
-          })) || [];
+        data.data?.map((m: any) => ({
+          name: `accounts/fireworks/models/${m.id}`,
+          label: `${m.id} (Dynamic)`,
+          provider: this.name,
+          maxTokenAllowed: m.context_length || 128000,
+        })) || [];
 
       return dynamicModels;
     } catch (error) {

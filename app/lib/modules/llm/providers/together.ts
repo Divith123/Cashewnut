@@ -12,8 +12,6 @@ export default class TogetherProvider extends BaseProvider {
     apiTokenKey: 'TOGETHER_API_KEY',
   };
 
-
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,

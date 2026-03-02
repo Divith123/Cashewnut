@@ -12,7 +12,6 @@ export default class AnthropicProvider extends BaseProvider {
     apiTokenKey: 'ANTHROPIC_API_KEY',
   };
 
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,

@@ -800,7 +800,7 @@ export const ModelSelector = ({
                           'px-3 py-2 text-sm cursor-pointer',
                           'hover:bg-bolt-elements-background-depth-3',
                           'text-bolt-elements-textPrimary',
-                          'flex items-center gap-2 border-b border-bolt-elements-borderColor mb-1 pb-2'
+                          'flex items-center gap-2 border-b border-bolt-elements-borderColor mb-1 pb-2',
                         )}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -811,7 +811,12 @@ export const ModelSelector = ({
                         }}
                       >
                         <span className="i-ph:plus-circle text-blue-400" />
-                        <span>Use custom model: <span className="font-medium text-bolt-elements-textPrimary">"{debouncedModelSearchQuery}"</span></span>
+                        <span>
+                          Use custom model:{' '}
+                          <span className="font-medium text-bolt-elements-textPrimary">
+                            "{debouncedModelSearchQuery}"
+                          </span>
+                        </span>
                       </div>
                     )}
 
@@ -857,7 +862,7 @@ export const ModelSelector = ({
                               'px-3 py-2 text-sm',
                               'cursor-pointer hover:bg-bolt-elements-background-depth-3 outline-none',
                               'text-bolt-elements-textPrimary',
-                              (model === modelOption.name || focusedModelIndex === index)
+                              model === modelOption.name || focusedModelIndex === index
                                 ? 'bg-bolt-elements-background-depth-2'
                                 : undefined,
                               focusedModelIndex === index ? 'ring-1 ring-inset ring-bolt-elements-focus' : undefined,
@@ -880,7 +885,9 @@ export const ModelSelector = ({
                                     }}
                                   />
                                   {isUnverified && (
-                                    <span className="ml-2 text-xs text-red-500 font-medium tracking-tight">Unverified</span>
+                                    <span className="ml-2 text-xs text-red-500 font-medium tracking-tight">
+                                      Unverified
+                                    </span>
                                   )}
                                 </div>
                                 <div className="flex items-center gap-2 mt-0.5">
@@ -899,15 +906,28 @@ export const ModelSelector = ({
                                   <div className="group relative">
                                     <span className="i-ph:info text-xs text-blue-400 cursor-help" />
                                     <div className="hidden group-hover:block absolute right-0 z-50 w-64 p-3 mt-1 text-xs rounded-lg bg-bolt-elements-background-depth-3 border border-bolt-elements-borderColor shadow-xl pointer-events-none">
-                                      <p className="mb-1.5 font-semibold text-bolt-elements-textPrimary border-b border-bolt-elements-borderColor pb-1">Verified Model Provenance</p>
+                                      <p className="mb-1.5 font-semibold text-bolt-elements-textPrimary border-b border-bolt-elements-borderColor pb-1">
+                                        Verified Model Provenance
+                                      </p>
                                       <p className="truncate text-bolt-elements-textSecondary mb-1">
-                                        Source: <a href={modelOption.provenance.doc_url} target="_blank" rel="noreferrer" className="text-blue-400 underline pointer-events-auto">{new URL(modelOption.provenance.doc_url).hostname}</a>
+                                        Source:{' '}
+                                        <a
+                                          href={modelOption.provenance.doc_url}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-blue-400 underline pointer-events-auto"
+                                        >
+                                          {new URL(modelOption.provenance.doc_url).hostname}
+                                        </a>
                                       </p>
                                       <p className="text-bolt-elements-textSecondary mb-1">
                                         Synced: {new Date(modelOption.provenance.fetched_at).toLocaleString()}
                                       </p>
                                       <p className="text-bolt-elements-textSecondary">
-                                        Status: <span className="uppercase text-[10px] font-bold tracking-wider text-green-500">{modelOption.provenance.status}</span>
+                                        Status:{' '}
+                                        <span className="uppercase text-[10px] font-bold tracking-wider text-green-500">
+                                          {modelOption.provenance.status}
+                                        </span>
                                       </p>
                                     </div>
                                   </div>
@@ -921,7 +941,7 @@ export const ModelSelector = ({
                               </div>
                             </div>
                           </div>
-                        )
+                        );
                       })
                     )}
                   </>

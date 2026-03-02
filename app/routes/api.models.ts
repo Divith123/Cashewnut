@@ -75,6 +75,7 @@ export async function loader({
   // Fetch verified models purely on the server to prevent Vite client bundling issues
   const syncService = ModelSyncService.getInstance();
   await syncService.loadVerifiedModels();
+
   const verifiedModels = syncService.getVerifiedModels();
 
   let modelList: ModelInfo[] = [];

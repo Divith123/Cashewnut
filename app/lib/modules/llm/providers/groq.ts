@@ -12,8 +12,6 @@ export default class GroqProvider extends BaseProvider {
     apiTokenKey: 'GROQ_API_KEY',
   };
 
-
-
   async getDynamicModels(
     apiKeys?: Record<string, string>,
     settings?: IProviderSetting,
